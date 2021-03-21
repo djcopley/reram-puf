@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 
 setup(
-    name='server',
+    name='reram-server',
     version='1.0.0',
     packages=find_packages(),
     include_package_data=True,
@@ -14,6 +14,6 @@ setup(
     ],
     use_scm_version={
         "relative_to": __file__,
-        "write_to": "server/version.py"
+        "write_to": "reram-server/version.py"
     },
 )
