@@ -1,8 +1,9 @@
 from setuptools import find_packages, setup
 
 setup(
-    name='reram-server',
-    version='1.0.0',
+    name="reram-server",
+    version="1.0.0",
+    license="GPLv3",
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
@@ -16,4 +17,9 @@ setup(
         "relative_to": __file__,
         "write_to": "reram-server/version.py"
     },
+    entry_points={
+        "console_scripts": [
+            "reram-server = reram-server.main:main"
+        ]
+    }
 )
