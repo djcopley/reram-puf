@@ -16,6 +16,8 @@ import hashlib
 import getpass
 
 """Hash Algorithms Class to be used as a Hash interface."""
+
+
 class Cryptography:
 
     def __init__(self):
@@ -23,7 +25,7 @@ class Cryptography:
         pass
 
     def enroll(self):
-    """Enroll a new client."""
+        """Enroll a new client."""
         pass
 
     def authenticate(self) -> bool:

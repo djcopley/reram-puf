@@ -11,14 +11,17 @@
 # simple interface for sending and receiving messages.
 #
 ###############################################################################
-import pyserial
+import serial
 
 """UART Communication Class for providing communication interface."""
+
+
 class UART_Transciever:
 
     def __init__(self):
         """Constructor method."""
         pass
+<<<<<<< HEAD
 
     def send(self):
         """Send a message."""
@@ -27,3 +30,5 @@ class UART_Transciever:
     def receive(self):
         """Process an incoming message."""
         pass
+=======
+>>>>>>> 15085c4fc130ddf0457d58362d8c52da12b3a416
