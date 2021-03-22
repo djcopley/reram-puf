@@ -19,3 +19,11 @@ class UART_Transciever:
     def __init__(self):
         """Constructor method."""
         pass
+
+    def send(self):
+        """Send a message."""
+        pass
+
+    def receive(self):
+        """Process an incoming message."""
+        pass

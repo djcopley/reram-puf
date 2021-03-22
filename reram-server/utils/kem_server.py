@@ -21,3 +21,26 @@ class KEM_Server:
     def __init__(self):
         """Constructor method."""
         pass
+
+    def enrollment(self):
+        """Conduct enrollment for a new client."""
+        pass
+
+    def handshake(self):
+        """Conduct handshake to begin a client connection."""
+        pass
+
+    def new_message(self):
+        """Generate a new encrypted message to be transmitted."""
+
+    def encrypt_message(self):
+        """Conduct encryption process steps on a new message string."""
+        pass
+
+    def decrypt_message(self):
+        """Conduct decryption process steps on an incoming ciphertext."""
+        pass
+
+    def generate_salt(self):
+        """Generate a new salt for handshake or enrollment."""
+        pass

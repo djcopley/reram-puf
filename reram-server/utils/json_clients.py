@@ -20,6 +20,10 @@ class JSON_Clients:
         """Constructor method."""
         pass
 
+    def create_client(self, user: str, passwd: str, salt: bytes) -> dict:
+        """Create a client object with client attributes."""
+        pass
+
     def load_client(self, user: str) -> dict:
         """"Load a client's data for authentication."""
         pass
