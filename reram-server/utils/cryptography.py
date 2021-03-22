@@ -17,7 +17,7 @@ import getpass
 
 """Hash Algorithms Class to be used as a Hash interface."""
 
-
+hashlib.pbkdf2_hmac()
 class Cryptography:
 
     def __init__(self):
