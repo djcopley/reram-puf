@@ -23,7 +23,6 @@ class KEM_Server:
     def __init__(self):
         """Constructor method."""
         pass
-<<<<<<< HEAD
 
     def enrollment(self):
         """Conduct enrollment for a new client."""
@@ -47,5 +46,3 @@ class KEM_Server:
     def generate_salt(self):
         """Generate a new salt for handshake or enrollment."""
         pass
-=======
->>>>>>> 15085c4fc130ddf0457d58362d8c52da12b3a416

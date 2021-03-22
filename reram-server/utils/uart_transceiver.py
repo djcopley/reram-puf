@@ -21,7 +21,6 @@ class UART_Transciever:
     def __init__(self):
         """Constructor method."""
         pass
-<<<<<<< HEAD
 
     def send(self):
         """Send a message."""
@@ -30,5 +29,3 @@ class UART_Transciever:
     def receive(self):
         """Process an incoming message."""
         pass
-=======
->>>>>>> 15085c4fc130ddf0457d58362d8c52da12b3a416
