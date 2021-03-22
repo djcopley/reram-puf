@@ -11,6 +11,7 @@
 # simple interface for sending and receiving messages.
 #
 ###############################################################################
+import pyserial
 
 """UART Communication Class for providing communication interface."""
 class UART_Transciever:
