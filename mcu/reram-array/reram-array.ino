@@ -8,8 +8,16 @@ void setup()
 
 void loop()
 {
-    while(Serial.available() > 0)
+    // Is there a byte available to read
+    if(Serial.available() > 0)
     {
+        // Instruction
+        byte inst = Serial.read();
+        if (inst & 0xF0 == 0xF0)
+        {
+            // Encryption mode
+            byte mode = inst & 0x0F;
+        }
     }
     // Serial message available?
     // First byte: Instruction
