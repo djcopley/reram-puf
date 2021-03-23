@@ -16,7 +16,7 @@ import json
 """JSON Clients Class to be used as a JSON Client Database interface."""
 
 
-class JSON_Clients:
+class ClientManager:
 
     def __init__(self):
         """Constructor method."""

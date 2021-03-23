@@ -13,11 +13,12 @@ setup(
     ],
     use_scm_version={
         "relative_to": __file__,
-        "write_to": "reram-server/version.py"
+        "write_to": "reram-puf/version.py"
     },
     entry_points={
         "console_scripts": [
-            "reram-server = reram-server.main:main"
+            "reram-server = reram-puf.reram-server.main:main",
+            "reram-client = reram-puf.reram-client.main:main"
         ]
     }
 )

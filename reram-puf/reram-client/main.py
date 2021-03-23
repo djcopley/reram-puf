@@ -1,6 +1,3 @@
-from .phy import *
-
-
 def main():
     pass
 

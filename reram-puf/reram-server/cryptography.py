@@ -32,6 +32,6 @@ class Cryptography:
         """Authenticate an existing client."""
         pass
 
-    def hash(self, algorithm: str, password: str, salt: bytes) -> str:
+    def hash(self, password: str, salt: bytes) -> str:
         """Conduct hash based on specified algorithm, password, and salt."""
         pass
