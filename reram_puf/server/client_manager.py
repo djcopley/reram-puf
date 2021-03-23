@@ -20,16 +20,29 @@ class ClientManager:
 
     def __init__(self):
         """Constructor method."""
-        pass
+        # JSON data to be held by client manager
+        self.clients = {}
 
     def create_client(self, user: str, passwd: str, salt: bytes) -> dict:
         """Create a client object with client attributes."""
-        pass
+        client = {}
+        client[user] = {}
+        client[user]["key"] = passwd
+        client[user]["salt"] = salt
+        return client
 
     def load_client(self, user: str) -> dict:
         """"Load a client's data for authentication."""
-        pass
+        try:
+            client = self.clients[user]
+        except KeyError:
+            print(f"[ERROR]: Client username {user} does not exist.")
+            client = None
+        finally:
+            return client
 
-    def save_client(self, user: str, key: str, salt: bytes) -> bool:
+    def save_client(self, client: dict) -> bool:
         """Save a client's data to the client JSON database."""
-        pass
+        # May add functionality later to control overwriting existing users
+        self.clients.update(client)
+        return True

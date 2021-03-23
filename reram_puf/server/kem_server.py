@@ -22,6 +22,7 @@ class KEMServer:
 
     def __init__(self):
         """Constructor method."""
+        self.database = ClientManager()
         pass
 
     def enrollment(self):
