@@ -15,8 +15,20 @@ void loop()
         byte inst = Serial.read();
         if (inst & 0xF0 == 0xF0)
         {
-            // Encryption mode
+            // Operation mode
             byte mode = inst & 0x0F;
+            if (mode == 1)
+            {
+            }
+            else if (mode == 2)
+            {
+            }
+            else if (mode == 3)
+            {
+            }
+            else
+            {
+            }
         }
     }
     // Serial message available?
