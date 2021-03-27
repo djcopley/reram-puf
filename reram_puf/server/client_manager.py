@@ -46,3 +46,8 @@ class ClientManager:
         # May add functionality later to control overwriting existing users
         self.clients.update(client)
         return True
+
+    def save_lookup_table(self, table: dict) -> bool:
+        """Save a lookup table after enrollment under client's the user key."""
+        # May add functionality to control overwriting existing LUTs
+        pass
