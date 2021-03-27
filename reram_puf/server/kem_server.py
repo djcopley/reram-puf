@@ -31,8 +31,13 @@ class KEMServer:
         """Conduct enrollment for a new client."""
         pass
 
-    def handshake(self):
+    def handshake(self, client: str):
         """Conduct handshake to begin a client connection."""
+        #TODO: Generate a random number
+        #TODO: Send number to client
+        #TODO: Hash number with client's password
+        #TODO: Parse for addresses and orders
+        #TODO: return the list of addresses and list of orders
         pass
 
     def get_new_message(self) -> str:
@@ -55,6 +60,12 @@ class KEMServer:
 
     def generate_salt(self):
         """Generate a new salt for handshake or enrollment."""
+        pass
+
+    def _create_lookup_table(self, voltages: list) -> dict:
+        """Create voltage lookup table from 2D array of voltages."""
+        lut = {}
+        # May not need this, as the arduino should create lut from array
         pass
 
     def _convert_plaintext_to_binary(self, string: str) -> str:
@@ -89,6 +100,14 @@ class KEMServer:
         finally:
             return current
 
-    def _voltage_lookup(self, current: int, addr: int) -> float:
+    def _voltage_lookup(self, user: str, current: int, addr: int) -> float:
         """Perform voltage lookup given current and cell address."""
-        pass
+        try:
+            lut = self.database.clients["user"]["image"]
+            voltage = lut[current][addr]
+        except KeyError:
+            print(KeyError)
+            print(f"[ERROR]: Invalid key in voltage lookup.")
+            voltage = None
+        finally:
+            return voltage

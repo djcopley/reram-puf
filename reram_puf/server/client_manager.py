@@ -47,7 +47,12 @@ class ClientManager:
         self.clients.update(client)
         return True
 
-    def save_lookup_table(self, table: dict) -> bool:
-        """Save a lookup table after enrollment under client's the user key."""
+    def save_lookup_table(self, user: str, table: dict) -> bool:
+        """Save a lookup table after enrollment under client's user key."""
         # May add functionality to control overwriting existing LUTs
-        pass
+        try:
+            self.clients[user]["image"] = table
+        except KeyError:
+            print(f"[ERROR]: Client username {user} does not exist.")
+            return False
+        return True
