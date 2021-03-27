@@ -14,6 +14,7 @@
 # will be stored here.
 #
 ################################################################################
+import struct
 from client_manager import ClientManager
 
 """KEM Server Class for creating a server instance for communication."""
@@ -25,6 +26,8 @@ class KEMServer:
         """Constructor method."""
         self.database = ClientManager()
         self._current_list = [700, 600, 500, 400]
+        self._addresses = []
+        self._orders = []
         pass
 
     def enrollment(self):
@@ -45,14 +48,21 @@ class KEMServer:
         msg = input("Enter message to send: ")
         return msg
 
-    def encrypt_message(self, msg: str, group_len: int) -> bytes:
+    def encrypt_message(self, user: str, msg: str, group_len: int) -> bytes:
         """Conduct encryption process steps on a new message string."""
         voltage_groups = []
         binary_msg = self._convert_plaintext_to_binary(msg)
-        binary_groups = self._group_binary_string(binary_msg)
+        binary_groups = self._group_binary_string(binary_msg, group_len)
         for group in binary_groups:
-            current = self._current_lookup(group, group_len)
-            
+            addr = self._get_next_address()
+            if addr is None:
+                return None
+            current = self._current_lookup(group)
+            voltage = self._voltage_lookup(user, current, addr)
+            voltage_groups.append(voltage)
+        ciphertext = struct.pack(f"{len(voltage_groups)}f", *voltage_groups)
+        #maybe clear addresses, orders before next message?
+        return ciphertext      
 
     def decrypt_message(self):
         """Conduct decryption process steps on an incoming ciphertext."""
@@ -88,6 +98,18 @@ class KEMServer:
         for index in range(0,len(string),2):
             string_list.append(string[index:index+group_len])
         return string_list
+
+    def _get_next_address(self) -> int:
+        """Return the next address to use for lookup table as integer."""
+        try:
+            next_order = self._orders.pop(0)
+            self._orders.append(next_order)
+            addr = int(self._addresses[next_order], 2)
+        except IndexError:
+            print(f"[ERROR]: Failed to fetch address. Bad addresses/orders.")
+            addr = None
+        finally:    
+            return addr
 
     def _current_lookup(self, code: str) -> int:
         """Convert from binary code to current using current lookup."""

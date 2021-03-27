@@ -1,6 +1,7 @@
 # SCRIPT USED ONLY FOR TESTING. 
 # DON'T KEEP ANYTHING IMPORTANT HERE.
 
+import struct
 import logging
 from kem_server import KEMServer
 
@@ -23,13 +24,16 @@ LUT = {
 if ks.database.save_lookup_table("user", LUT):
     logging.info(f"LUT Saved: {ks.database.clients['user']['image']}")
 
-# Handshake
+# Handshake addresses
 addresses = b"00011011"
-orders = b"4321"
 address_groups = ks._group_binary_string(addresses, 2)
 logging.info(f"Addresses: {address_groups}")
+orders = b"3210"
+orders = orders.decode("utf-8")
 orders = [ int(char) for char in orders ]
 logging.info(f"Order of addresses: {orders}")
+ks._addresses = address_groups
+ks._orders = orders
 
 # Get message
 message = "HI"
@@ -53,6 +57,17 @@ logging.info(f"Current stream:    {current_groups}")
 # Perform voltage lookup
 voltage_groups = []
 for current in current_groups:
-    voltage = ks._voltage_lookup("user", current, 0)
+    next_order = orders.pop(0)
+    index = int(address_groups[next_order], 2)
+    orders.append(next_order)
+    voltage = ks._voltage_lookup("user", current, index)
     voltage_groups.append(voltage)
 logging.info(f"Voltage stream: {voltage_groups}")
+
+# Package ciphertext
+ciphertext = struct.pack(f"{len(voltage_groups)}f", *voltage_groups)
+logging.info(f"Ciphertext: {ciphertext}")
+
+# All in one encryption
+ciphertext = ks.encrypt_message("user", "HI", 2)
+logging.info(f"Ciphertext: {ciphertext}")
