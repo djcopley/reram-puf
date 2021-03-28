@@ -7,6 +7,17 @@ from kem_server import KEMServer
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
 
+
+
+
+
+
+
+
+
+# TEST
+#==============================================================================#
+
 ks = KEMServer()
 
 # Create client in server database
@@ -72,6 +83,6 @@ logging.info(f"Ciphertext: {ciphertext}")
 
 # All in one encryption
 ks.enrollment()
-ks.handshake("user")
-ciphertext = ks.encrypt_message("user", "HI", 2)
+ks.handshake("user2")
+ciphertext = ks.encrypt_message("user2", "HI", 2)
 logging.info(f"Ciphertext: {ciphertext}")
