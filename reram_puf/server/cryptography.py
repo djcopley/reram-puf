@@ -12,6 +12,7 @@
 # clients JSON database for enrolling and authenticating clients. 
 #
 ###############################################################################
+import os
 import hashlib
 import getpass
 
@@ -22,20 +23,15 @@ class Cryptography:
 
     def __init__(self):
         """Constructor method."""
-        pass
-
-    def enroll(self):
-        """Enroll a new client."""
-        pass
-
-    def authenticate(self) -> bool:
-        """Authenticate an existing client."""
-        pass
+        self.SALT_LEN = 16
 
     def hash(self, password: str, salt: bytes) -> str:
         """Conduct hash based on specified algorithm, password, and salt."""
-        pass
+        digest = hashlib.sha256()
+        msg = bytes(password, "utf-8") + salt
+        digest.update(msg)
+        return digest.hexdigest()
 
-    def _generate_salt(self, length: int) -> bytes:
+    def generate_salt(self, length: int) -> bytes:
         """Generate a new salt for handshake or enrollment."""
         return os.urandom(length)

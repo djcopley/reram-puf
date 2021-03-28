@@ -14,8 +14,11 @@
 # will be stored here.
 #
 ################################################################################
+import os
 import struct
+import getpass
 from client_manager import ClientManager
+from cryptography import Cryptography
 
 """KEM Server Class for creating a server instance for communication."""
 
@@ -24,29 +27,81 @@ class KEMServer:
 
     def __init__(self):
         """Constructor method."""
-        self.database = ClientManager()
+        self.SALT_LEN = 16
+        self._database = ClientManager()
+        self._crypto_suite = Cryptography()
         self._current_list = [700, 600, 500, 400]
         self._addresses = []
         self._orders = []
-        pass
 
-    def enrollment(self):
+
+    def enrollment(self) -> bool:
         """Conduct enrollment for a new client."""
-        pass
+        #Add functionality later to prevent duplicate users
+        user = input("Enter username: ")
 
-    def handshake(self, client: str):
+        pass_confirmed = False
+        strikes = 0
+        while not pass_confirmed and strikes < 3:
+            password1 = getpass.getpass(prompt="Enter Password:")
+            password2 = getpass.getpass(prompt="Confirm Password:")
+            if password1 == password2:
+                pass_confirmed = True
+            else:
+                print("[ERROR]: Passwords do not match.")
+                strikes += 1
+        if strikes == 3:
+            return False
+        
+        salt = self._crypto_suite.generate_salt(self.SALT_LEN)
+        pwd_hash = self._crypto_suite.hash(password1, salt)
+        new_client = self._database.create_client(user, pwd_hash, salt)
+        self._database.save_client(new_client)
+        client_lut = input("Enter LUT: ") #May change to recv LUT from client
+        self._database.save_lookup_table(user, client_lut)
+        return True
+
+    
+    def authenticate(self, user: str) -> bool:
+        """Authenticate an existing client."""
+        try:
+            info = self._database.clients[user]
+            salt = info["salt"]
+            key = info["key"]
+            print(f"User : {user}")
+            passwd = getpass.getpass(prompt="Enter Password:")
+            yield passwd
+            pwd_hash = self._crypto_suite.hash(passwd, salt)
+            if pwd_hash == key:
+                print("[SUCCESS]: Authentication Successful.")
+                yield True
+            else:
+                print("[ERROR]: Authentication failed. Invalid username or password.")
+                yield False
+        except:
+            print("[ERROR]: Authentication failed. User does not exist.")
+            yield False
+
+
+    def handshake(self, client: str) -> bool:
         """Conduct handshake to begin a client connection."""
-        #TODO: Generate a random number
-        #TODO: Send number to client
-        #TODO: Hash number with client's password
-        #TODO: Parse for addresses and orders
-        #TODO: return the list of addresses and list of orders
-        pass
+        [passwd, auth] = self.authenticate(client)
+        if auth:
+            rand_num = self._crypto_suite.generate_salt(self.SALT_LEN)
+            #TODO: Send number to client
+            instructions = self._crypto_suite.hash(passwd, rand_num)
+            #TODO: Parse for addresses and orders (use some .split here?)
+            #TODO: store the list of addresses and list of orders
+            return True
+        return False
+            
+
 
     def get_new_message(self) -> str:
         """Get a new message to be encrypted and transmitted."""
         msg = input("Enter message to send: ")
         return msg
+
 
     def encrypt_message(self, user: str, msg: str, group_len: int) -> bytes:
         """Conduct encryption process steps on a new message string."""
@@ -61,22 +116,14 @@ class KEMServer:
             voltage = self._voltage_lookup(user, current, addr)
             voltage_groups.append(voltage)
         ciphertext = struct.pack(f"{len(voltage_groups)}f", *voltage_groups)
-        #maybe clear addresses, orders before next message?
+        #maybe clear addresses and orders before next message?
         return ciphertext      
+
 
     def decrypt_message(self):
         """Conduct decryption process steps on an incoming ciphertext."""
         pass
 
-    def generate_salt(self):
-        """Generate a new salt for handshake or enrollment."""
-        pass
-
-    def _create_lookup_table(self, voltages: list) -> dict:
-        """Create voltage lookup table from 2D array of voltages."""
-        lut = {}
-        # May not need this, as the arduino should create lut from array
-        pass
 
     def _convert_plaintext_to_binary(self, string: str) -> str:
         """Convert a plaintext string to a binary string."""
@@ -86,6 +133,7 @@ class KEMServer:
             binary_char = format(binary_int, '08b')
             binary_str += binary_char
         return binary_str
+
 
     def _group_binary_string(self, binary_msg: str, group_len: int) -> list:
         """Group a binary string into clusters of group length.
@@ -99,6 +147,7 @@ class KEMServer:
             string_list.append(string[index:index+group_len])
         return string_list
 
+
     def _get_next_address(self) -> int:
         """Return the next address to use for lookup table as integer."""
         try:
@@ -111,6 +160,7 @@ class KEMServer:
         finally:    
             return addr
 
+
     def _current_lookup(self, code: str) -> int:
         """Convert from binary code to current using current lookup."""
         index = int(code, 2)
@@ -122,10 +172,11 @@ class KEMServer:
         finally:
             return current
 
+
     def _voltage_lookup(self, user: str, current: int, addr: int) -> float:
         """Perform voltage lookup given current and cell address."""
         try:
-            lut = self.database.clients["user"]["image"]
+            lut = self._database.clients["user"]["image"]
             voltage = lut[current][addr]
         except KeyError:
             print(KeyError)

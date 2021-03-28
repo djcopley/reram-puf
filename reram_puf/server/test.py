@@ -10,10 +10,10 @@ logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
 ks = KEMServer()
 
 # Create client in server database
-client = ks.database.create_client("user", "password", b"salt")
+client = ks._database.create_client("user", "password", b"salt")
 logging.info(f"Client info: {client}")
-if ks.database.save_client(client):
-    logging.info(f"Client saved: {ks.database.clients['user']}")
+if ks._database.save_client(client):
+    logging.info(f"Client saved: {ks._database.clients['user']}")
 
 # Create Voltage LUT and save to client
 LUT = {
@@ -21,8 +21,8 @@ LUT = {
     600 : [2.4,3.0,3.6,4.2],
     500 : [2.0,2.5,3.0,3.5],
     400 : [1.6,2.0,2.4,2.8] }
-if ks.database.save_lookup_table("user", LUT):
-    logging.info(f"LUT Saved: {ks.database.clients['user']['image']}")
+if ks._database.save_lookup_table("user", LUT):
+    logging.info(f"LUT Saved: {ks._database.clients['user']['image']}")
 
 # Handshake addresses
 addresses = b"00011011"
@@ -68,6 +68,10 @@ logging.info(f"Voltage stream: {voltage_groups}")
 ciphertext = struct.pack(f"{len(voltage_groups)}f", *voltage_groups)
 logging.info(f"Ciphertext: {ciphertext}")
 
+#==============================================================================#
+
 # All in one encryption
+ks.enrollment()
+ks.handshake("user")
 ciphertext = ks.encrypt_message("user", "HI", 2)
 logging.info(f"Ciphertext: {ciphertext}")
