@@ -13,46 +13,37 @@
 ################################################################################
 import json
 
-"""JSON Clients Class to be used as a JSON Client Database interface."""
+"""JSON utilities to be used as a JSON Client Database interface."""
 
+def create_client( user: str, passwd: str, salt: bytes, lut: dict) -> dict:
+    """Create a client object with client attributes."""
+    client = {}
+    client[user] = {}
+    client[user]["key"] = passwd
+    client[user]["salt"] = salt
+    client[user]["image"] = lut
+    return client
 
-class ClientManager:
-
-    def __init__(self):
-        """Constructor method."""
-        # JSON data to be held by client manager
-        self.clients = {}
-
-    def create_client(self, user: str, passwd: str, salt: bytes) -> dict:
-        """Create a client object with client attributes."""
-        client = {}
-        client[user] = {}
-        client[user]["key"] = passwd
-        client[user]["salt"] = salt
+def load_client(user: str, database: dict) -> dict:
+    """"Load a client's data for authentication."""
+    try:
+        client = database[user]
+    except KeyError:
+        print(f"[ERROR]: Client username {user} does not exist.")
+        client = None
+    finally:
         return client
 
-    def load_client(self, user: str) -> dict:
-        """"Load a client's data for authentication."""
-        try:
-            client = self.clients[user]
-        except KeyError:
-            print(f"[ERROR]: Client username {user} does not exist.")
-            client = None
-        finally:
-            return client
-
-    def save_client(self, client: dict) -> bool:
-        """Save a client's data to the client JSON database."""
-        # May add functionality later to control overwriting existing users
-        self.clients.update(client)
-        return True
-
-    def save_lookup_table(self, user: str, table: dict) -> bool:
-        """Save a lookup table after enrollment under client's user key."""
-        # May add functionality to control overwriting existing LUTs
-        try:
-            self.clients[user]["image"] = table
-        except KeyError:
-            print(f"[ERROR]: Client username {user} does not exist.")
+def save_client(client: dict, database: dict) -> bool:
+    """Save a client's data to the client JSON database."""
+    try:
+        user = list(client.keys())[0]
+        if user in database:
+            print(f"[ERROR]: Client username {user} already exists.")
             return False
-        return True
+    except KeyError:
+        print(f"[ERROR]: Key Error when searching for user.")
+        return False
+
+    database.update(client)
+    return True

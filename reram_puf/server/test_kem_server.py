@@ -32,6 +32,14 @@ class TestKEMServerMethods(unittest.TestCase):
         self.assertEqual(passwd, test_hash)
         self.assertEqual(salt, test_salt)
 
+    def test_handshake(self):
+        client = { 
+            "key" : 
+            '9389203d0b9aaa2ae452626dd522b1a00bc15d481597c22bd4d3ae6b1fe4f071',
+            "salt" : b'\xa0\xd5\x08\xb9\x8au\xf7:\x81\x1dC\xc8J\xb7\xfd`'
+            }
+        result = self.ks.handshake(client, passwd="test_passwd")
+        self.assertTrue(result)
 
 
 if __name__ == "__main__":
