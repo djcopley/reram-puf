@@ -18,6 +18,8 @@ import os
 import struct
 import getpass
 import hashlib
+from string_manager import *
+from client_manager import *
 
 """KEM Server Class for creating a server instance for communication."""
 
@@ -33,14 +35,21 @@ class KEMServer:
         self.current_list = [700, 600, 500, 400]
         self.orders = []
 
-    def authenticate(self, user: dict, passwd=None) -> list:
+    def authenticate(self, user: str, passwd=None) -> list:
         """Authenticate a user with client data."""
+        # Fetch client data from database and check for none
+        client = load_client(user, self.clients)
+        if client is None:
+            yield None
+            yield None
+            return None
+        # Get password if not specified, yield the password back
         if passwd is None:
             passwd = getpass.getpass()
         yield passwd
-
-        pwd_hash = self.hash(passwd, user["salt"])
-        if pwd_hash == user["key"]:
+        # Hash password and check against client data, yield auth result
+        pwd_hash = self.hash(passwd, client["salt"])
+        if pwd_hash == client["key"]:
             #print("[SUCCESS]: Authentication Successful")
             yield True
         else:
@@ -52,7 +61,7 @@ class KEMServer:
         self.addresses = []
         self.orders = []
 
-    def create_message(self, username: str, msg: str) -> bytes:
+    def create_message(self, user: str, msg: str) -> bytes:
         """Encrypt a message string to send to client."""
         # Set voltage stream and chunk message into binary groups
         voltages = []
@@ -64,7 +73,7 @@ class KEMServer:
             if addr is None:
                 return None
             current = self.current_lookup(group)
-            voltage = self.voltage_lookup(username, current, addr)
+            voltage = self.voltage_lookup(user, current, addr)
             voltages.append(voltage)
         # Convert from voltage list of floats to byte stream
         ciphertext = struct.pack(f"{len(voltages)}f", *voltages)
@@ -131,15 +140,16 @@ class KEMServer:
         finally:    
             return addr
 
-    def handshake(self, user: dict, passwd=None) -> bool:
+    def handshake(self, user: str, passwd=None, rand=None) -> bool:
         """Handshake process with a client."""
         [passwd, auth] = self.authenticate(user, passwd=passwd)
         if auth:
-            rand = self.generate_salt(self.group_len)
+            if rand is None:
+                rand = self.generate_salt(self.group_len)
             #print(f"[HANDSHAKE]: {rand}")
             pwd_hash = self.hash(passwd, rand)
             # Orders is first half of hash as grouped binary string integers
-            orders = pwd_hash[:len(pwd_hash)/2]
+            orders = pwd_hash[:len(pwd_hash)//2]
             orders = bin(int(orders, 16))[2:]
             orders = group_binary_string(orders, self.group_len)
             orders = [int(num,2) for num in orders]
