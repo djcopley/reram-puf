@@ -52,8 +52,16 @@ class TestKEMServerMethods(unittest.TestCase):
         self.assertListEqual(self.ks.addresses, addresses)
         self.assertListEqual(self.ks.orders, orders)
 
-    def test_create_message(self):
-        pass
+    def test_encrypt_message(self):
+        result = self.ks.handshake(self.username, passwd=self.password,
+            rand=self.client["salt"])
+        msg = "HI"
+        ciphertext = self.ks.encrypt_message(self.username, msg)
+        self.assertTrue(result)
+        self.assertIsNotNone(ciphertext)
+
+    def test_decrypt_message(self):
+        self.assertTrue(False)
 
 
 if __name__ == "__main__":

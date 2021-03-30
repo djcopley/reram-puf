@@ -61,7 +61,22 @@ class KEMServer:
         self.addresses = []
         self.orders = []
 
-    def create_message(self, user: str, msg: str) -> bytes:
+    def current_lookup(self, code: str) -> int:
+        """Convert from binary code to current using current lookup."""
+        index = int(code, 2)
+        try:
+            current = self.current_list[index]
+        except IndexError:
+            print(f"[ERROR]: Invalid binary code {code} for current lookup.")
+            current = None
+        finally:
+            return current
+
+    def decrypt_message(self, user: str, msg: bytes) -> str:
+        """Decrypt a messags sent from a client."""
+        pass
+
+    def encrypt_message(self, user: str, msg: str) -> bytes:
         """Encrypt a message string to send to client."""
         # Set voltage stream and chunk message into binary groups
         voltages = []
@@ -78,17 +93,6 @@ class KEMServer:
         # Convert from voltage list of floats to byte stream
         ciphertext = struct.pack(f"{len(voltages)}f", *voltages)
         return ciphertext
-
-    def current_lookup(self, code: str) -> int:
-        """Convert from binary code to current using current lookup."""
-        index = int(code, 2)
-        try:
-            current = self.current_list[index]
-        except IndexError:
-            print(f"[ERROR]: Invalid binary code {code} for current lookup.")
-            current = None
-        finally:
-            return current
 
     def enroll(self, user=None, passwd=None, salt=None, lut=None) -> bool:
         """Enroll a new client."""
@@ -166,6 +170,15 @@ class KEMServer:
         msg = bytes(message, "utf-8") + salt
         digest.update(msg)
         return digest.hexdigest()
+
+    def reverse_current_lookup(self, current: int) -> str:
+        """Retrieve the binary code N given the current."""
+        pass
+
+    def reverse_voltage_lookup(self, user: str, voltage: float, 
+        addr: int) -> int:
+        """Retrieve the current given user, voltage, and address."""
+        pass
 
     def voltage_lookup(self, user: str, current: int, addr: int) -> float:
         """Perform voltage lookup given current and cell address."""
