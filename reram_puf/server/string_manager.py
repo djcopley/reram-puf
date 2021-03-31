@@ -1,4 +1,4 @@
-######## Cryptography Utilities ########
+######## String Manager Utilities ########
 #
 # Authors: Corey Cline
 #          Daniel Copley
@@ -6,10 +6,7 @@
 # Date: 03/22/2021
 #
 # Description:
-# A Cryptography Class to be used for providing an interface for hashing data 
-# with a variety of hash algorithms, as well as accessing client credentials,
-# enrolling new clients, and authenticating existing clients. Will access a
-# clients JSON database for enrolling and authenticating clients. 
+# A set of supporting methods for plaintext and binary string manipulation. 
 #
 ###############################################################################
 

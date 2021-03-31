@@ -1,4 +1,4 @@
-######## Client Database Utilities ########
+######## Client Manager Utilities ########
 #
 # Authors: Corey Cline
 #          Daniel Copley
@@ -6,9 +6,7 @@
 # Date: 03/22/2021
 #
 # Description:
-# A Client Database Class used to store and modify client credentials in a
-# JSON database. Will conduct file I/O to the client database for saving new
-# clients and loading existing clients.
+# A set of supporting methods for modifying data in a JSON database.
 #
 ################################################################################
 import json
