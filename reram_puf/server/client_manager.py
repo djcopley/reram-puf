@@ -13,6 +13,7 @@ import json
 
 """JSON utilities to be used as a JSON Client Database interface."""
 
+
 def create_client( user: str, passwd: str, salt: bytes, lut: dict) -> dict:
     """Create a client object with client attributes."""
     client = {}

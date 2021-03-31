@@ -57,7 +57,7 @@ class TestKEMServerMethods(unittest.TestCase):
             rand=self.client["salt"])
         msg = "HI"
         ciphertext = self.ks.encrypt_message(self.username, msg)
-        #print(ciphertext)
+        print(ciphertext)
         self.assertTrue(result)
         self.assertIsNotNone(ciphertext)
 
