@@ -57,11 +57,36 @@ class TestKEMServerMethods(unittest.TestCase):
             rand=self.client["salt"])
         msg = "HI"
         ciphertext = self.ks.encrypt_message(self.username, msg)
+        #print(ciphertext)
         self.assertTrue(result)
         self.assertIsNotNone(ciphertext)
 
+    def test_reverse_current_lookup(self):
+        codes = ["00", "01", "10", "11"]
+        currents = [700, 600, 500, 400, 300]
+        case_1 = self.ks.reverse_current_lookup(700, 2)
+        case_2 = self.ks.reverse_current_lookup(600, 2)
+        case_3 = self.ks.reverse_current_lookup(500, 2)
+        case_4 = self.ks.reverse_current_lookup(400, 2)
+        self.assertEqual(case_1, codes[0])
+        self.assertEqual(case_2, codes[1])
+        self.assertEqual(case_3, codes[2])
+        self.assertEqual(case_4, codes[3])
+
     def test_decrypt_message(self):
-        self.assertTrue(False)
+        result = self.ks.handshake(self.username, passwd=self.password,
+            rand=self.client["salt"])
+        self.assertTrue(result)
+        msg = "HI"
+        ciphertext = self.ks.encrypt_message(self.username, msg)
+        self.assertIsNotNone(ciphertext)
+
+        result = self.ks.handshake(self.username, passwd=self.password,
+            rand=self.client["salt"])
+        self.assertTrue(result)
+        plaintext = self.ks.decrypt_message(self.username, ciphertext)
+        self.assertIsNotNone(plaintext)
+        self.assertEqual(msg, plaintext)
 
 
 if __name__ == "__main__":

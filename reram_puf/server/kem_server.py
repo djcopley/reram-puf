@@ -74,7 +74,20 @@ class KEMServer:
 
     def decrypt_message(self, user: str, msg: bytes) -> str:
         """Decrypt a messags sent from a client."""
-        pass
+        binary_msg = ""
+        for index in range(0,len(msg),4):
+            addr = self.get_next_address()
+            byte_group = msg[index:index+4]
+            voltage = round(struct.unpack("f",byte_group)[0], 2)
+            current = self.reverse_voltage_lookup(user, voltage, addr)
+            if current is None:
+                return None
+            binary_group = self.reverse_current_lookup(current, self.group_len)
+            if binary_group is None:
+                return None
+            binary_msg += binary_group
+        plaintext = convert_binary_to_plaintext(binary_msg)
+        return plaintext
 
     def encrypt_message(self, user: str, msg: str) -> bytes:
         """Encrypt a message string to send to client."""
@@ -171,14 +184,31 @@ class KEMServer:
         digest.update(msg)
         return digest.hexdigest()
 
-    def reverse_current_lookup(self, current: int) -> str:
+    def reverse_current_lookup(self, current: int, group_len: int) -> str:
         """Retrieve the binary code N given the current."""
-        pass
+        if current in self.current_list:
+            code = self.current_list.index(current)
+            code = format(code, f"0{group_len}b")
+            return code
+        print("[ERROR]: Current not found in current list.")
+        return None
 
     def reverse_voltage_lookup(self, user: str, voltage: float, 
         addr: int) -> int:
         """Retrieve the current given user, voltage, and address."""
-        pass
+        try:
+            lut = self.clients["user"]["image"]
+            lut_keys = list(lut.keys())
+            lut_vals = list(lut.values())
+            for index in range(0,len(lut_vals)):
+                if lut_vals[index][addr] == voltage:
+                    current = lut_keys[index]
+                    return current
+            print("[ERROR]: Voltage not found in lookup table.")
+            return None
+        except KeyError:
+            print(f"[ERROR]: User {user} does not exist.")
+            return None
 
     def voltage_lookup(self, user: str, current: int, addr: int) -> float:
         """Perform voltage lookup given current and cell address."""

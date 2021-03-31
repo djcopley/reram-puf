@@ -36,3 +36,12 @@ def group_binary_string(binary_msg: str, group_len: int) -> list:
     for index in range(0,len(string),2):
         string_list.append(string[index:index+group_len])
     return string_list
+
+def convert_binary_to_plaintext(bin_str: str) -> str:
+    """Convert a binary string to a plaintext string."""
+    string = ""
+    for index in range(0, len(bin_str), 8):
+        byte = bin_str[index : index + 8]
+        binary_int = int(byte, 2)
+        string += chr(binary_int)
+    return string
