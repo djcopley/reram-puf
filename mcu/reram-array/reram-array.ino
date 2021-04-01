@@ -18,9 +18,9 @@ float scaleVoltage(int voltage)
     return (voltage) * (5 / 1024);
 }
 
-void serialWriteFloat(float *buf)
+void serialWriteFloat(float buf)
 {
-    Serial.write((uint8_t *) buf, 4); // Write the float to the serial port
+    Serial.write((uint8_t *) &buf, 4); // Write the float to the serial port
 }
 
 void setup()
@@ -43,6 +43,6 @@ void loop()
         analogWrite(wordLines[address & 2 >> 1], voltage); // Write voltage to pin stored at top addr bit
         delay(rcDelay);
         float current = scaleVoltage(analogRead(bitLines[address & 1])) / resistance;
-        serialWriteFloat(&current); // Write the current as a floating point number
+        serialWriteFloat(current); // Write the current as a floating point number
     }
 }
