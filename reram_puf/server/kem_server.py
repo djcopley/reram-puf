@@ -209,11 +209,12 @@ class KEMServer:
 
     def voltage_lookup(self, user: str, current: int, addr: int) -> float:
         """Perform voltage lookup given current and cell address."""
+        voltage = None
+
         try:
             voltage = self.clients["user"]["image"][current][addr]
         except KeyError:
             print(KeyError)
             print(f"[ERROR]: Invalid key in voltage lookup.")
-            voltage = None
         finally:
             return voltage
