@@ -1,9 +1,15 @@
 #include "sha256.h"
 
+const int wordLines[] = {10, 11};
+const int bitLines[] = {0, 1}
 
 void setup()
 {
     Serial.begin(115200);
+    for (int line = 0; line < sizeof(wordLines); line++)
+    {
+        pinMode(wordLines[line], OUTPUT);
+    }
 }
 
 void loop()
@@ -11,48 +17,7 @@ void loop()
     // Is there a byte available to read
     if(Serial.available() > 0)
     {
-        // Instruction
-        byte inst = Serial.read();
-        if (inst & 0xF0 == 0xF0)
-        {
-            // Operation mode
-            byte mode = inst & 0x0F;
-            if (mode == 1)
-            {
-            }
-            else if (mode == 2)
-            {
-            }
-            else if (mode == 3)
-            {
-            }
-            else
-            {
-            }
-        }
+        byte readByte = Serial.read();
+
     }
-    // Serial message available?
-    // First byte: Instruction
-        // Enroll (0xFF 0x00)
-            // Send common password
-            // Return PUF LUT (How long?)
-
-        // Encrypt (0xFF 0x01) TO BE CONTINUED
-            // Handshake
-            // User inputs common password (NULL terminated)
-            // User inputs plaintext message (NULL terminated)
-            // Break message into 2-bit grousp
-            // Uses circuit to generate cipher text
-            // Returns cipher text to host
-
-            // NOT COMPLETE //
-
-        // Decrypt (0xFF 0x02)
-            // Handshake
-            // Recieve random number
-            // Hash with password
-            // Concat salt and password
-            // Hash
-            // Extract
-        // Else, Error
 }

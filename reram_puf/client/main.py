@@ -1,6 +1,7 @@
 import argparse
 
 from reram_puf import __version__
+from reram_puf.client.client import Client
 
 
 def parse_args():
@@ -11,11 +12,19 @@ def parse_args():
         action="version",
         version=__version__
     )
+    parser.add_argument("serial_port",
+                        type=str,
+                        help="the serial port of arduino puf")
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
+    client = Client(port=args.port)
+    try:
+        client.run()
+    except KeyboardInterrupt():
+        exit(0)
 
 
 if __name__ == '__main__':

@@ -18,7 +18,7 @@ import os
 import struct
 import getpass
 import hashlib
-from string_manager import *
+from reram_puf.common.string_manager import *
 from client_manager import *
 
 """KEM Server Class for creating a server instance for communication."""
@@ -47,10 +47,10 @@ class KEMServer:
         # Hash password and check against client data, yield auth result
         pwd_hash = self.hash(passwd, client["salt"])
         if pwd_hash == client["key"]:
-            #print("[SUCCESS]: Authentication Successful")
+            # print("[SUCCESS]: Authentication Successful")
             return passwd, True
         else:
-            #print("[ERROR]: Authentication failed. Invalid username or password.")
+            # print("[ERROR]: Authentication failed. Invalid username or password.")
             return passwd, False
 
     def close(self):
@@ -72,10 +72,10 @@ class KEMServer:
     def decrypt_message(self, user: str, msg: bytes) -> str:
         """Decrypt a messags sent from a client."""
         binary_msg = ""
-        for index in range(0,len(msg),4):
+        for index in range(0, len(msg), 4):
             addr = self.get_next_address()
-            byte_group = msg[index:index+4]
-            voltage = round(struct.unpack("f",byte_group)[0], 2)
+            byte_group = msg[index:index + 4]
+            voltage = round(struct.unpack("f", byte_group)[0], 2)
             current = self.reverse_voltage_lookup(user, voltage, addr)
             if current is None:
                 return None
@@ -151,7 +151,7 @@ class KEMServer:
         except IndexError:
             print(f"[ERROR]: Failed to fetch address. Bad addresses/orders.")
             addr = None
-        finally:    
+        finally:
             return addr
 
     def handshake(self, user: str, passwd=None, rand=None) -> bool:
@@ -160,18 +160,18 @@ class KEMServer:
         if auth:
             if rand is None:
                 rand = self.generate_salt(self.group_len)
-            #print(f"[HANDSHAKE]: {rand}")
+            # print(f"[HANDSHAKE]: {rand}")
             pwd_hash = self.hash(passwd, rand)
             # Orders is first half of hash as grouped binary string integers
-            orders = pwd_hash[:len(pwd_hash)//2]
+            orders = pwd_hash[:len(pwd_hash) // 2]
             orders = bin(int(orders, 16))[2:]
             orders = group_binary_string(orders, self.group_len)
-            orders = [int(num,2) for num in orders]
+            orders = [int(num, 2) for num in orders]
             # Set the addresses and orders for the session (until close)
             self.addresses = ["00", "01", "10", "11"]
             self.orders = orders
             return True
-        #print("[HANDSHAKE]: Failed.")
+        # print("[HANDSHAKE]: Failed.")
         return False
 
     def hash(self, message: str, salt: bytes) -> str:
@@ -190,14 +190,14 @@ class KEMServer:
         print("[ERROR]: Current not found in current list.")
         return None
 
-    def reverse_voltage_lookup(self, user: str, voltage: float, 
-        addr: int) -> int:
+    def reverse_voltage_lookup(self, user: str, voltage: float,
+                               addr: int) -> int:
         """Retrieve the current given user, voltage, and address."""
         try:
             lut = self.clients["user"]["image"]
             lut_keys = list(lut.keys())
             lut_vals = list(lut.values())
-            for index in range(0,len(lut_vals)):
+            for index in range(0, len(lut_vals)):
                 if lut_vals[index][addr] == voltage:
                     current = lut_keys[index]
                     return current
@@ -209,11 +209,12 @@ class KEMServer:
 
     def voltage_lookup(self, user: str, current: int, addr: int) -> float:
         """Perform voltage lookup given current and cell address."""
+        voltage = None
+
         try:
             voltage = self.clients["user"]["image"][current][addr]
         except KeyError:
             print(KeyError)
             print(f"[ERROR]: Invalid key in voltage lookup.")
-            voltage = None
         finally:
             return voltage
