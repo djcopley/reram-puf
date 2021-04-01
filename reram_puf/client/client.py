@@ -8,9 +8,12 @@ from getpass import getpass
 
 
 class Client:
-    def __init__(self, port: str, baudrate: int):
+    def __init__(self, hostname, port: str, baudrate: int):
         self.device = serial.Serial(port=port, baudrate=baudrate)
         self.orders = []
+
+        self.network = Network(hostname, "daniel")
+        self.network.connect()
 
     def hash(self, message: str, salt: bytes) -> str:
         """Conduct SHA-256 Hash on message with salt."""
@@ -22,14 +25,11 @@ class Client:
     def handshake(self):
         password = getpass()
         # Send password
+        self.network.send("corey", )
         # Get salt
         salt = b""
         hash = self.hash(password, salt)
         self.orders = hash[:len(hash) // 2]
-
-    def get_message(self):
-        # Get message from MQTT broker (blocking operation)
-        return
 
     def decrypt_message(self, message):
         binary_msg = ""
