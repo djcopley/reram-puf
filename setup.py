@@ -7,7 +7,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "pyserial",
-        "paho"
+        "paho-mqtt"
     ],
     setup_requires=[
         "setuptools_scm"
