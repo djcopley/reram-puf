@@ -9,7 +9,7 @@
 # A Network interface class for MQTT plug and play communication.
 #
 #############################################################################
-from mqtt_client import MQTTClient
+from reram_puf.common.mqtt_client import MQTTClient
 
 """Network Class for MQTT Communication between client and server."""
 
@@ -23,20 +23,22 @@ class Network:
         self.mqtt = MQTTClient(self.hostname, self.user)
         self.unread = self.mqtt.msg_queue
 
-    def close(self, port=1883):
+    def close(self):
         """Close the network connection."""
         self.mqtt.loop_stop()
         self.mqtt.disconnect()
 
-    def connect(self):
+    def connect(self, port=1883):
         """Connect to the network interface."""
         self.mqtt.connect(port)
         self.mqtt.loop_start
 
-    def receive(self, user=self.user) -> str:
+    def receive(self, user=None) -> str:
         """Receive a message and return the string."""
-        self.mqtt.subscribe(topic=user)
+        if user is None:
+            user = self.user
+        self.mqtt.subscribe(user)
 
     def send(self, receiver: str, msg: bytes) -> bool:
         """Send a message, return true if successful."""
-        self.mqtt.publish(topic=receiver, msg)
+        self.mqtt.publish(receiver, msg, qos=2)

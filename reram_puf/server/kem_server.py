@@ -40,21 +40,18 @@ class KEMServer:
         # Fetch client data from database and check for none
         client = load_client(user, self.clients)
         if client is None:
-            yield None
-            yield None
-            return None
+            return None, None
         # Get password if not specified, yield the password back
         if passwd is None:
             passwd = getpass.getpass()
-        yield passwd
         # Hash password and check against client data, yield auth result
         pwd_hash = self.hash(passwd, client["salt"])
         if pwd_hash == client["key"]:
             #print("[SUCCESS]: Authentication Successful")
-            yield True
+            return passwd, True
         else:
             #print("[ERROR]: Authentication failed. Invalid username or password.")
-            yield False
+            return passwd, False
 
     def close(self):
         """Close a client connection."""
@@ -159,7 +156,7 @@ class KEMServer:
 
     def handshake(self, user: str, passwd=None, rand=None) -> bool:
         """Handshake process with a client."""
-        [passwd, auth] = self.authenticate(user, passwd=passwd)
+        passwd, auth = self.authenticate(user, passwd=passwd)
         if auth:
             if rand is None:
                 rand = self.generate_salt(self.group_len)
