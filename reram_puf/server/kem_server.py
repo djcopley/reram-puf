@@ -19,7 +19,7 @@ import struct
 import getpass
 import hashlib
 from reram_puf.common.string_manager import *
-from client_manager import *
+from reram_puf.server.client_manager import *
 
 """KEM Server Class for creating a server instance for communication."""
 

@@ -1,5 +1,5 @@
 import unittest
-from kem_server import KEMServer
+from reram_puf.server.kem_server import KEMServer
 
 class TestKEMServerMethods(unittest.TestCase):
     
