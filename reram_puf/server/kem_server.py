@@ -34,6 +34,7 @@ class KEMServer:
         self.clients = {}
         self.current_list = [700, 600, 500, 400]
         self.orders = []
+        self.salt = b""
 
     def authenticate(self, user: str, passwd=None) -> list:
         """Authenticate a user with client data."""
@@ -57,6 +58,7 @@ class KEMServer:
         """Close a client connection."""
         self.addresses = []
         self.orders = []
+        self.salt = b""
 
     def current_lookup(self, code: str) -> int:
         """Convert from binary code to current using current lookup."""
@@ -133,10 +135,7 @@ class KEMServer:
             lut = input("Enter Client Lookup Table: ")
         # Create client object and save to database
         new_client = create_client(user, pwd_hash, salt, lut)
-        if save_client(new_client, self.clients):
-            return True
-        # Return false on error
-        return False
+        return save_client(new_client, self.clients):
 
     def generate_salt(self, length: int) -> bytes:
         """Generate a new salt for handshake or enrollment."""
@@ -160,7 +159,8 @@ class KEMServer:
         if auth:
             if rand is None:
                 rand = self.generate_salt(self.group_len)
-            # print(f"[HANDSHAKE]: {rand}")
+                self.salt = rand
+            print(f"[HANDSHAKE]: {rand}")
             pwd_hash = self.hash(passwd, rand)
             # Orders is first half of hash as grouped binary string integers
             orders = pwd_hash[:len(pwd_hash) // 2]
@@ -171,7 +171,7 @@ class KEMServer:
             self.addresses = ["00", "01", "10", "11"]
             self.orders = orders
             return True
-        # print("[HANDSHAKE]: Failed.")
+        print("[HANDSHAKE]: Failed.")
         return False
 
     def hash(self, message: str, salt: bytes) -> str:
