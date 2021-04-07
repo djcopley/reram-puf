@@ -1,7 +1,7 @@
 import argparse
 
 from reram_puf import __version__
-from client import Client
+from reram_puf.client.client import Client
 
 
 def parse_args():
