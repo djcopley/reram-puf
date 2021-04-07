@@ -3,13 +3,16 @@ import struct
 import hashlib
 
 from getpass import getpass
+from reram_puf.common.string_manager import group_binary_string, convert_binary_to_plaintext
 
 
 class Client:
     def __init__(self, port="/dev/tty.usbmodem14101", baudrate=115200):
         self.device = serial.Serial(port=port, baudrate=baudrate)
-        self.orders = []
+        self.group_len = 2
+        self.orders = None
         self.addresses = (0, 1, 2, 3)
+        self.current_list = (700, 600, 500, 400)
 
     def handshake(self):
         # Get password
@@ -20,6 +23,9 @@ class Client:
         # Hash the password with the salt
         hashed_pw = self.sha_hash(password, salt)
         # Generate instructions
+        self.orders = hashed_pw[:len(hashed_pw) // 2]
+        self.orders = bin(int(self.orders, 16))[2:]
+        self.orders = group_binary_string(self.orders, self.group_len)
 
     @staticmethod
     def sha_hash(password: str, salt: bytes) -> str:
@@ -36,7 +42,7 @@ class Client:
         return digest.hexdigest()
 
     def decrypt(self, cipher):
-        plain = ""
+
         return plain
 
     def puf_instr(self, addr: int, voltage: float):
