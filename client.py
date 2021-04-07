@@ -13,19 +13,15 @@ class Client:
         self.orders = None
         self.addresses = (0, 1, 2, 3)
         self.current_list = (700, 600, 500, 400)
-        self.salt = b""
 
     def close(self):
         """Close the current connection."""
         self.orders = None
-        self.salt = b""
 
     def handshake(self, passwd: str, salt: bytes):
         """Conduct handshake with server."""
-        # Store the salt for the current connection
-        self.salt = salt
         # Hash the password with the salt
-        hashed_pw = self.sha_hash(password, salt)
+        hashed_pw = self.sha_hash(passwd, salt)
         # Generate instructions
         self.orders = hashed_pw[:len(hashed_pw) // 2]
         self.orders = bin(int(self.orders, 16))[2:]
