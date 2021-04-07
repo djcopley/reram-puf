@@ -2,7 +2,6 @@ import serial
 import struct
 import hashlib
 
-from getpass import getpass
 from reram_puf.common.string_manager import group_binary_string, convert_binary_to_plaintext
 
 
