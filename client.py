@@ -46,8 +46,41 @@ class Client:
         return digest.hexdigest()
 
     def decrypt(self, cipher):
+        binary_message = ""
 
-        return plain
+        for index in range(0, len(cipher), 4):
+            addr = self.get_next_address()
+            byte_group = cipher[index:index + 4]
+            voltage = struct.unpack("f", byte_group)[0]
+            current = self.puf_instr(addr, voltage)
+            binary_group = self.current_lookup(current, self.group_len)
+            binary_message += binary_group
+
+        plain_text = convert_binary_to_plaintext(binary_message)
+
+        return plain_text
+
+    def current_lookup(self, current, group_len: int) -> str:
+        """Retrieve the binary code N given the current."""
+        smallest_difference = abs(self.current_list[0] - current)
+        code = format(0, f"0{group_len}b")
+
+        for stored_current, index in enumerate(self.current_list)[1:]:
+            if abs(current - stored_current) < smallest_difference:
+                smallest_difference = stored_current
+                code = format(index, f"0{group_len}b")
+
+        return code
+
+    def get_next_address(self):
+        """Return the next address to use for lookup table as integer."""
+        try:
+            next_order = self.orders.pop(0)
+            self.orders.append(next_order)
+            addr = int(self.addresses[next_order], 2)
+            return addr
+        except IndexError:
+            print(f"[ERROR]: Failed to fetch address. Bad addresses/orders.")
 
     def puf_instr(self, addr: int, voltage: float):
         """
