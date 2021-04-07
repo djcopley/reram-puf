@@ -135,7 +135,7 @@ class KEMServer:
             lut = input("Enter Client Lookup Table: ")
         # Create client object and save to database
         new_client = create_client(user, pwd_hash, salt, lut)
-        return save_client(new_client, self.clients):
+        return save_client(new_client, self.clients)
 
     def generate_salt(self, length: int) -> bytes:
         """Generate a new salt for handshake or enrollment."""
