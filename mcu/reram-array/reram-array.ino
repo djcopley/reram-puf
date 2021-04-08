@@ -21,6 +21,7 @@ float scaleVoltage(int voltage)
 void serialWriteFloat(float *buf)
 {
     Serial.write((uint8_t *) buf, 4); // Write the float to the serial port
+    //Serial.println(*buf);
 }
 
 void setup()
@@ -47,12 +48,7 @@ void loop()
         //Serial.println(analog_raw);
         float current_in_amps = scaleVoltage(analog_raw) / resistance;
         float current_in_uamps = current_in_amps * 1000000;
-<<<<<<< HEAD
-        // Serial.print("Current (uA): ");
-        // Serial.println(current_in_uamps);
-        serialWriteInt(current_in_uamps); // Write the current as an integer
-=======
         serialWriteFloat(&current_in_uamps); // Write the current as an integer
->>>>>>> 54d12afa7082b28b1a3dd3e61f8ae086b0bfe959
+        //Serial.write(readByte);
     }
 }
