@@ -20,7 +20,8 @@ float scaleVoltage(int voltage)
 
 void serialWriteInt(int buf)
 {
-    Serial.write((char *) &buf, 4); // Write the float to the serial port
+    Serial.println("serialWriteInt: %d" % buf);
+//    Serial.write((char *) &buf, 4); // Write the float to the serial port
 }
 
 void setup()
@@ -40,10 +41,25 @@ void loop()
         byte readByte = Serial.read();
         byte address = getAddress(readByte);
         byte voltage = getVoltage(readByte);
+
+        Serial.println("Address: %d" % address);
+        Serial.println("Voltage: %s" % voltage);
+
+        Serial.println("Addr msb: %d" % address >> 1);
+
         analogWrite(wordLines[address >> 1], voltage); // Write voltage to pin stored at top addr bit
         delay(rcDelay);
+
+        Serial.println("Addr lsb: %d" % address & 1);
+
         float current_in_amps = scaleVoltage(analogRead(bitLines[address & 1])) / resistance;
+
+        Serial.println("Current in amps: %f" % current_in_amps);
+
         int current_in_uamps = (int) (current_in_amps * 1000000);
+
+        Serial.println("Current in uamps: %d",current_in_uamps);
+
         serialWriteInt(current_in_uamps); // Write the current as an integer
     }
 }
