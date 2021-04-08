@@ -98,8 +98,8 @@ class Client:
         :return: Calculated current
         """
         # Conver voltage to 6bit voltage
-        voltage = round(voltage * 64 / 5) & 0b00111111
-        self.device.write(addr << 6 | voltage)
+        voltage = min(round(voltage * 64 / 5), 63) 
+        self.device.write((addr << 6) | voltage)
         res, = struct.unpack("i", self.device.read(4))
         return res
 

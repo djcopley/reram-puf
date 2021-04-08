@@ -23,19 +23,23 @@ def parse_args():
         action="version",
         version=__version__
     )
-    parser.add_argument("serial_port",
+    parser.add_argument("--serial_port",
                         type=str,
-                        help="the serial port of arduino puf")
+                        help="the serial port of arduino puf",
+                        default="COM4")
 
-    parser.add_argument("baud_rate",
+    parser.add_argument("--baud_rate",
                         type=str,
-                        help="the arduino serial baud rate")
+                        help="the arduino serial baud rate",
+                        default="115200")
 
-    parser.add_argument("--host", type=str, required=True,
-                        help="Hostname to connect to for network communication.")
+    parser.add_argument("--host", type=str,
+                        help="Hostname to connect to for network communication.",
+                        default="192.168.0.2")
 
-    parser.add_argument("--client", type=str, required=True,
-                        help="Name of the client who is connecting to the network.")
+    parser.add_argument("--client", type=str,
+                        help="Name of the client who is connecting to the network.",
+                        default="client")
 
     return parser.parse_args()
 
