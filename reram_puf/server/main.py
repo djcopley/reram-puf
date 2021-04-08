@@ -54,6 +54,8 @@ def main():
     server = KEMServer(salt_len=16, group_len=2)
     enrollment_data = network.receive("enrollment")
     user, passwd, salt, lut = enrollment_data.split(",")
+    if not salt:
+        salt = None
 
     # Enroll new user, conduct handshake, send a message
     if server.enroll(user=user, passwd=passwd, salt=salt, lut=lut):
@@ -63,7 +65,7 @@ def main():
             logging.debug(f"Message to be sent: {message}")
             ciphertext = server.encrypt_message(user, message)
             logging.debug(f"Encrypted message: {ciphertext}")
-            network.send("client", ciphertext)
+            network.send(user, ciphertext)
         logging.debug("Closing client connection...")
         server.close()
     logging.debug("Disconnecting from broker...")

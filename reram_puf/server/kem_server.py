@@ -32,7 +32,7 @@ class KEMServer:
         self.group_len = group_len
         self.addresses = []
         self.clients = {}
-        self.current_list = [700, 600, 500, 400]
+        self.current_list = [200, 150, 100, 50]
         self.orders = []
         self.salt = b""
 
