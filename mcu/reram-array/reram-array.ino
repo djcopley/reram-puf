@@ -42,8 +42,13 @@ void loop()
         byte voltage = getVoltage(readByte);
         analogWrite(wordLines[address >> 1], voltage); // Write voltage to pin stored at top addr bit
         delay(rcDelay);
-        float current_in_amps = scaleVoltage(analogRead(bitLines[address & 1])) / resistance;
+        int analog_raw = analogRead(bitLines[address & 1]);
+        //Serial.print("Analog Raw: ");
+        //Serial.println(analog_raw);
+        float current_in_amps = scaleVoltage(analog_raw) / resistance;
         float current_in_uamps = current_in_amps * 1000000;
+        // Serial.print("Current (uA): ");
+        // Serial.println(current_in_uamps);
         serialWriteInt(current_in_uamps); // Write the current as an integer
     }
 }
