@@ -8,6 +8,7 @@ from reram_puf.common.string_manager import group_binary_string, convert_binary_
 class Client:
     def __init__(self, port="COM4", baudrate=115200):
         self.device = serial.Serial(port=port, baudrate=baudrate)
+        # self.device.readline()
         self.group_len = 2
         self.orders = None
         self.addresses = (0, 1, 2, 3)
