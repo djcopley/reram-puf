@@ -58,7 +58,7 @@ def main():
     # Enroll new user, conduct handshake, send a message
     if server.enroll(user=user, passwd=passwd, salt=salt, lut=lut):
         if server.handshake(user, passwd=passwd):
-            network.send("handshake", sever.salt)
+            network.send("handshake", server.salt)
             message = input("Enter message: ")
             logging.debug(f"Message to be sent: {message}")
             ciphertext = server.encrypt_message(user, message)

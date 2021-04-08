@@ -16,7 +16,7 @@ import time
 
 
 class Network:
-    
+
     def __init__(self, hostname: str, user: str):
         """Constructor method."""
         self.hostname = hostname
@@ -41,13 +41,12 @@ class Network:
         print("Waiting for a message...")
         cmd_received = False
         while not cmd_received:
-            time.sleep(0.1) # Delay to throttle tight loop
+            time.sleep(0.1)  # Delay to throttle tight loop
             if len(self.mqtt.msg_queue) > 0:
                 # Grab the message from the queue
                 incoming_msg = self.mqtt.msg_queue.pop()
                 return incoming_msg
-        
 
-    def send(self, receiver: str, msg: bytes):
+    def send(self, receiver: str, msg: str):
         """Send a message, return true if successful."""
         self.mqtt.publish(receiver, msg, qos=2)

@@ -10,7 +10,8 @@
 #
 ################################################################################
 import paho.mqtt.client as mqtt
-import logging, time
+import logging
+import time
 
 """MQTT Client Class to be used for Network Communication."""
 

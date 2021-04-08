@@ -11,7 +11,7 @@ class Client:
         self.group_len = 2
         self.orders = None
         self.addresses = (0, 1, 2, 3)
-        self.current_list = (700, 600, 500, 400)
+        self.current_list = (500, 400, 300, 200)
 
     def close(self):
         """Close the current connection."""
@@ -25,6 +25,18 @@ class Client:
         self.orders = hashed_pw[:len(hashed_pw) // 2]
         self.orders = bin(int(self.orders, 16))[2:]
         self.orders = group_binary_string(self.orders, self.group_len)
+
+    def get_voltage_lut(self):
+        voltage_lut = {}
+        for addr in self.addresses:
+            voltage_lut[addr] = []
+            for current in self.current_list:
+                voltage_lut[addr].append(self.get_voltage_at_current(addr, current))
+        return voltage_lut
+
+    def get_voltage_at_current(self, address, current):
+        puf_current = self.puf_instr(address, 5)
+        return puf_current * ((5 * 252 / 255) / current)
 
     @staticmethod
     def sha_hash(password: str, salt: bytes) -> str:
