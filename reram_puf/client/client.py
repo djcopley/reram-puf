@@ -88,7 +88,7 @@ class Client:
         # Conver voltage to 6bit voltage
         voltage = round(voltage * 64 / 5) & 0b00111111
         self.device.write(addr << 6 | voltage)
-        res, = struct.unpack("f", self.device.read(4))
+        res, = struct.unpack("d", self.device.read(4))
         return res
 
 
