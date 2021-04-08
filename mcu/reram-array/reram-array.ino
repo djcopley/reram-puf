@@ -15,7 +15,7 @@ byte getVoltage(byte value)
 
 float scaleVoltage(int voltage)
 {
-    return (voltage) * (5 / 1024);
+    return (voltage) * (5.0 / 1024.0);
 }
 
 void serialWriteInt(int buf)
@@ -59,6 +59,8 @@ void loop()
         Serial.println(address & 1);
 
         float current_in_amps = scaleVoltage(analogRead(bitLines[address & 1])) / resistance;
+        Serial.print("Analog Read Raw: ");
+        Serial.println( scaleVoltage( analogRead(bitLines[address & 1]) ) );
 
         Serial.print("Current in amps: ");
         Serial.println(current_in_amps);
