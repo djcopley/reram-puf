@@ -1,6 +1,6 @@
 const int wordLines[] = {10, 11};
 const int bitLines[] = {A0, A1};
-const int resistance = 30000; // Resistance of current sensing resistor
+const int resistance = 5000; // Resistance of current sensing resistor
 const int rcDelay = 100; // time in ms to delay
 
 byte getAddress(byte value)
@@ -10,7 +10,7 @@ byte getAddress(byte value)
 
 byte getVoltage(byte value)
 {
-    return (value & 0x3F) << 2; // Mask bottom 6 bits and SHL 2 for 1 byte value
+    return value << 2; // Mask bottom 6 bits and SHL 2 for 1 byte value
 }
 
 float scaleVoltage(int voltage)
@@ -18,7 +18,7 @@ float scaleVoltage(int voltage)
     return (voltage) * (5 / 1024);
 }
 
-void serialWriteFloat(int buf)
+void serialWriteInt(int buf)
 {
     Serial.write((uint8_t *) &buf, 4); // Write the float to the serial port
 }
@@ -44,6 +44,6 @@ void loop()
         delay(rcDelay);
         float current_in_amps = scaleVoltage(analogRead(bitLines[address & 1])) / resistance;
         int current_in_uamps = current_in_amps * 1000000;
-        serialWriteFloat(current_in_uamps); // Write the current as an integer
+        serialWriteInt(current_in_uamps); // Write the current as an integer
     }
 }
