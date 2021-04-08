@@ -1,5 +1,5 @@
 const int wordLines[] = {10, 11};
-const int bitLines[] = {0, 1};
+const int bitLines[] = {A0, A1};
 const int resistance = 30000; // Resistance of current sensing resistor
 const int rcDelay = 100; // time in ms to delay
 
@@ -44,6 +44,6 @@ void loop()
         delay(rcDelay);
         float current_in_amps = scaleVoltage(analogRead(bitLines[address & 1])) / resistance;
         int current_in_uamps = current_in_amps * 1000000;
-        serialWriteFloat(current); // Write the current as a floating point number
+        serialWriteFloat(current_in_uamps); // Write the current as an integer
     }
 }

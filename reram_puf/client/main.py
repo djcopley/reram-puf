@@ -51,7 +51,7 @@ def main():
     username = input("Please enter username: ")
     password = getpass()
 
-    network.send("enrollment", f"{username},{password},,{client.get_voltage_lut()}")
+    network.send("enrollment", f"{username};{password};;{client.get_voltage_lut()}")
     salt = network.receive("handshake")
 
     client.handshake(password, bytes(salt, "utf-8"))

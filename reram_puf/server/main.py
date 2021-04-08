@@ -53,7 +53,8 @@ def main():
     # Create server and wait for enrollment message
     server = KEMServer(salt_len=16, group_len=2)
     enrollment_data = network.receive("enrollment")
-    user, passwd, salt, lut = enrollment_data.split(",")
+    print(enrollment_data)
+    user, passwd, salt, lut = enrollment_data.split(";")
     if not salt:
         salt = None
 
