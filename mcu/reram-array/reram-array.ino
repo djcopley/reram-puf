@@ -18,12 +18,9 @@ float scaleVoltage(int voltage)
     return (voltage) * (5.0 / 1024.0);
 }
 
-void serialWriteInt(int buf)
+void serialWriteInt(float buf)
 {
-    for (int i = 3; i >= 0; i--)
-    {
-        Serial.write((&buf)[i]); // Write the integer to the serial port
-    }
+    Serial.write((uint8_t *) &buf, 4); // Write the float to the serial port
 }
 
 void setup()
@@ -47,6 +44,6 @@ void loop()
         delay(rcDelay);
         float current_in_amps = scaleVoltage(analogRead(bitLines[address & 1])) / resistance;
         int current_in_uamps = current_in_amps * 1000000;
-        serialWriteInt(current_in_uamps); // Write the current as an integer
+        serialWriteInt(7.0); // Write the current as an integer
     }
 }
