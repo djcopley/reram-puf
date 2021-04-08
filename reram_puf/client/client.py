@@ -8,6 +8,7 @@ from reram_puf.common.string_manager import group_binary_string, convert_binary_
 class Client:
     def __init__(self, port="/dev/tty.usbmodem14101", baudrate=115200):
         self.device = serial.Serial(port=port, baudrate=baudrate)
+        # self.device.readline()
         self.group_len = 2
         self.orders = None
         self.addresses = (0, 1, 2, 3)
@@ -100,7 +101,7 @@ class Client:
         # Conver voltage to 6bit voltage
         voltage = min(round(voltage * 64 / 5), 63) 
         self.device.write((addr << 6) | voltage)
-        res, = struct.unpack("i", self.device.read(4))
+        res, = struct.unpack("f", self.device.read(4))
         return res
 
 
