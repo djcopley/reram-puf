@@ -10,7 +10,7 @@ byte getAddress(byte value)
 
 byte getVoltage(byte value)
 {
-    return value << 2; // Mask bottom 6 bits and SHL 2 for 1 byte value
+    return (value & 0x3F) << 2; // Mask bottom 6 bits and SHL 2 for 1 byte value
 }
 
 float scaleVoltage(int voltage)
@@ -18,7 +18,7 @@ float scaleVoltage(int voltage)
     return (voltage) * (5 / 1024);
 }
 
-void serialWriteInt(int buf)
+void serialWriteFloat(float buf)
 {
     Serial.println("serialWriteInt: %d" % buf);
 //    Serial.write((char *) &buf, 4); // Write the float to the serial port
