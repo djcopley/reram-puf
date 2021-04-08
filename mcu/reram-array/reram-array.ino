@@ -10,7 +10,7 @@ byte getAddress(byte value)
 
 byte getVoltage(byte value)
 {
-    return value << 2; // Mask bottom 6 bits and SHL 2 for 1 byte value
+    return (value & 0x3F) << 2; // Mask bottom 6 bits and SHL 2 for 1 byte value
 }
 
 float scaleVoltage(int voltage)
@@ -18,7 +18,7 @@ float scaleVoltage(int voltage)
     return (voltage) * (5 / 1024);
 }
 
-void serialWriteInt(int buf)
+void serialWriteFloat(float buf)
 {
     Serial.write((uint8_t *) &buf, 4); // Write the float to the serial port
 }
@@ -43,7 +43,7 @@ void loop()
         analogWrite(wordLines[address >> 1], voltage); // Write voltage to pin stored at top addr bit
         delay(rcDelay);
         float current_in_amps = scaleVoltage(analogRead(bitLines[address & 1])) / resistance;
-        int current_in_uamps = current_in_amps * 1000000;
-        serialWriteInt(current_in_uamps); // Write the current as an integer
+        float current_in_uamps = current_in_amps * 1000000;
+        serialWriteFloat(current_in_uamps); // Write the current as an integer
     }
 }
