@@ -43,7 +43,7 @@ void loop()
         analogWrite(wordLines[address >> 1], voltage); // Write voltage to pin stored at top addr bit
         delay(rcDelay);
         float current_in_amps = scaleVoltage(analogRead(bitLines[address & 1])) / resistance;
-        int current_in_uamps = current_in_amps * 1000000;
-        serialWriteInt(7.0); // Write the current as an integer
+        float current_in_uamps = current_in_amps * 1000000;
+        serialWriteInt(current_in_uamps); // Write the current as an integer
     }
 }
