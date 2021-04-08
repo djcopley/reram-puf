@@ -11,7 +11,7 @@ class Client:
         self.group_len = 2
         self.orders = None
         self.addresses = (0, 1, 2, 3)
-        self.current_list = (500, 400, 300, 200)
+        self.current_list = (200, 150, 100, 50)
 
     def close(self):
         """Close the current connection."""
