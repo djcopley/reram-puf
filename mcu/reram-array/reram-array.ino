@@ -20,7 +20,10 @@ float scaleVoltage(int voltage)
 
 void serialWriteInt(int buf)
 {
-    Serial.write((uint8_t *) &buf, 4); // Write the float to the serial port
+    for (int i = 3; i >= 0; i--)
+    {
+        Serial.write((&buf)[i]); // Write the integer to the serial port
+    }
 }
 
 void setup()
