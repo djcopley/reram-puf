@@ -100,7 +100,7 @@ class Client:
         # Conver voltage to 6bit voltage
         voltage = min(round(voltage * 64 / 5), 63) 
         self.device.write((addr << 6) | voltage)
-        res, = struct.unpack("f", self.device.read(4))
+        res, = struct.unpack("<I", self.device.read(4))
         return res
 
 
