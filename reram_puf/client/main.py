@@ -10,7 +10,7 @@ from reram_puf.client.client import Client
 # Define callback function for MQTT message callback
 def on_message(client, userdata, message):
     """Callback function for receiving messages."""
-    msg = message.payload.decode("utf-8")
+    msg = message.payload
     # Capture the message in the global Network Class queue
     network.mqtt.msg_queue.append(msg)
 
@@ -50,6 +50,7 @@ def main():
 
     global network
     network = Network(args.host, args.client)
+    network.mqtt.client.on_message = on_message
     network.connect()
 
     username = input("Please enter username: ")
@@ -58,13 +59,15 @@ def main():
     network.send("enrollment", f"{username};{password};;{client.get_voltage_lut()}")
     salt = network.receive("handshake")
 
-    client.handshake(password, bytes(salt, "utf-8"))
+    client.handshake(password, salt)
 
     try:
         while True:
             cipher = network.receive(username)
-            client.decrypt(cipher)
-    except KeyboardInterrupt():
+            print(type(cipher))
+            plaintext = client.decrypt(cipher)
+            print(f"PLAINTEXT: {plaintext}")
+    except KeyboardInterrupt:
         exit(0)
 
 

@@ -103,31 +103,22 @@ float get_current_from_voltage(byte address, byte voltage)
     //Serial.println(analog_raw);
     float current_in_amps = scaleVoltage(analog_raw) / resistance;
     float current_in_uamps = current_in_amps * 1000000;
+    analogWrite(wordLines[address & 1], 0);
     return current_in_uamps;
 }
 
 float get_voltage_from_current(byte address, word current)
 {
-    analogWrite(wordLines[address >> 1], 255); // Write full-scale to get line equation
-    delay(rcDelay);
-    int analog_raw = analogRead(bitLines[address & 1]);
-    //Serial.print("Analog Raw: ");
-    //Serial.println(analog_raw);
-    float r_voltage = scaleVoltage(analog_raw);
-    float pot_voltage = 5.0 - r_voltage;
-    //Serial.print("Pot Voltage: ");
-    //Serial.println(pot_voltage);
-    float current_in_amps = r_voltage / resistance;
-    float current_in_uamps = current_in_amps * 1000000;
-    // Serial.print("Max current in uA: ");
-    // Serial.println(current_in_uamps);
-    float pot_resistance = pot_voltage / current_in_amps;
-    // Serial.print("Pot Resistance: ");
-    // Serial.println(pot_resistance);
-    // Serial.print("Current to solve with: ");
-    // Serial.println(current);
-    float voltage_drop = pot_resistance * current / 1000000;
-    return voltage_drop + r_voltage;
+    int current_threshold = 10;
+    for (int voltage = 0; voltage < 255; voltage++)
+    {
+        float current_out = get_current_from_voltage(address, voltage);
+        if (abs(current_out - current) < current_threshold)
+        {
+            return voltage * 5.0 / 255.0;
+        }
+    }
+    return 5.0;
 }
 
 void setup()

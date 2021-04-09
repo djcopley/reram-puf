@@ -32,7 +32,7 @@ class KEMServer:
         self.group_len = group_len
         self.addresses = []
         self.clients = {}
-        self.current_list = [200, 150, 100, 50]
+        self.current_list = [400, 300, 200, 100]
         self.orders = []
         self.salt = b""
 
@@ -102,6 +102,7 @@ class KEMServer:
             current = self.current_lookup(group)
             voltage = self.voltage_lookup(user, current, addr)
             voltages.append(voltage)
+        print(f"VOLTAGE STREAM: {voltages}")
         # Convert from voltage list of floats to byte stream
         ciphertext = struct.pack(f"{len(voltages)}f", *voltages)
         return ciphertext
@@ -170,6 +171,7 @@ class KEMServer:
             # Set the addresses and orders for the session (until close)
             self.addresses = ["00", "01", "10", "11"]
             self.orders = orders
+            print(f"ORDERS: {self.orders}")
             return True
         print("[HANDSHAKE]: Failed.")
         return False
@@ -212,9 +214,9 @@ class KEMServer:
         voltage = None
 
         try:
-            voltage = self.clients["user"]["image"][current][addr]
+            voltage = self.clients[user]["image"][current][addr]
         except KeyError:
             print(KeyError)
-            print(f"[ERROR]: Invalid key in voltage lookup.")
+            print(f"[ERROR]: Invalid key(s) {current},{addr} in voltage lookup.")
         finally:
             return voltage

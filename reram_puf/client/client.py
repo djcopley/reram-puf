@@ -1,6 +1,7 @@
 import serial
 import struct
 import hashlib
+import time
 
 from reram_puf.common.string_manager import group_binary_string, convert_binary_to_plaintext
 
@@ -11,8 +12,13 @@ class Client:
         # self.device.readline()
         self.group_len = 2
         self.orders = None
-        self.addresses = (0, 1, 2, 3)
-        self.current_list = (200, 150, 100, 50)
+        self.addresses = ["00", "01", "10", "11"]
+        self.current_list = [400, 300, 200, 100]
+        self.client_lut = {
+            400: [4.84, 4.61, 4.33, 4.33], 
+            300: [4.09, 4.07, 4.09, 4.07], 
+            200: [3.84, 3.81, 3.83, 3.81], 
+            100: [3.59, 3.54, 3.59, 3.54] }
 
     def close(self):
         """Close the current connection."""
@@ -26,8 +32,11 @@ class Client:
         self.orders = hashed_pw[:len(hashed_pw) // 2]
         self.orders = bin(int(self.orders, 16))[2:]
         self.orders = group_binary_string(self.orders, self.group_len)
+        self.orders = [int(num, 2) for num in self.orders]
+        print(f"ORDERS: {self.orders}")
 
     def get_voltage_lut(self):
+        return str(self.client_lut)
         voltage_lut = {}
         for addr in self.addresses:
             voltage_lut[addr] = []
@@ -60,10 +69,13 @@ class Client:
             addr = self.get_next_address()
             byte_group = cipher[index:index + 4]
             voltage = struct.unpack("f", byte_group)[0]
+            print(f"Sending voltage to PUF INSTR: {voltage}")
             current = self.puf_instr(addr, voltage)
             binary_group = self.current_lookup(current, self.group_len)
             binary_message += binary_group
+            print(f"GROUP: {binary_group}")
 
+        print(f"BINARY MSG: {binary_message}")
         plain_text = convert_binary_to_plaintext(binary_message)
 
         return plain_text
@@ -73,9 +85,9 @@ class Client:
         smallest_difference = abs(self.current_list[0] - current)
         code = format(0, f"0{group_len}b")
 
-        for stored_current, index in enumerate(self.current_list)[1:]:
+        for index, stored_current in list(enumerate(self.current_list))[1:]:
             if abs(current - stored_current) < smallest_difference:
-                smallest_difference = stored_current
+                smallest_difference = abs(current - stored_current)
                 code = format(index, f"0{group_len}b")
 
         return code
@@ -98,6 +110,23 @@ class Client:
         :param voltage: Floating point voltage (0-5v)
         :return: Calculated current
         """
+        msg = "0000" + bin(addr)[2:]
+        voltage_bin = bin(round(voltage / 5.0 * 255))[2:]
+        while len(voltage_bin) < 10:
+            voltage_bin = '0' + voltage_bin
+        msg += voltage_bin
+        print(f"PUF INSTR MSG: {msg}")
+        msg_bytes = f"<{msg}>".encode("utf-8")
+        self.device.write(msg_bytes)
+        print("Waiting for response...")
+        time.sleep(0.5)
+        read = self.device.read_all()
+        out = read.decode("utf-8").split("\r\n")
+        #print("Response: {}".format(out))
+        out = read.decode("utf-8").split("\r\n")[0]
+        out = round(float(out))
+        print(f"output: {out}")
+        return out
         # Conver voltage to 6bit voltage
         voltage = min(round(voltage * 64 / 5), 63) 
         self.device.write(((addr << 6) | voltage).to_bytes(1, "big"))

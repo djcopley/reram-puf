@@ -1,5 +1,7 @@
 import argparse
 import logging
+import time
+import json
 
 from reram_puf import __version__
 from reram_puf.common.network import Network
@@ -57,15 +59,24 @@ def main():
     user, passwd, salt, lut = enrollment_data.split(";")
     if not salt:
         salt = None
+    lut = {
+        400: [5.0, 5.0, 5.0, 5.0], 
+        300: [4.0, 3.84, 4.27, 4.27], 
+        200: [2.63, 2.49, 2.82, 2.8], 
+        100: [1.25, 1.22, 1.35, 1.35] }
 
     # Enroll new user, conduct handshake, send a message
     if server.enroll(user=user, passwd=passwd, salt=salt, lut=lut):
         if server.handshake(user, passwd=passwd):
             network.send("handshake", server.salt)
+            time.sleep(2)
+            print(f"CLIENT: {server.clients}")
             message = input("Enter message: ")
             logging.debug(f"Message to be sent: {message}")
             ciphertext = server.encrypt_message(user, message)
-            logging.debug(f"Encrypted message: {ciphertext}")
+            print(type(ciphertext))
+            print(f"CIPHER: {ciphertext}")
+            logging.info(f"Encrypted message: {ciphertext}")
             network.send(user, ciphertext)
         logging.debug("Closing client connection...")
         server.close()
